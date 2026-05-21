@@ -3,9 +3,10 @@ import {
   MapPin, Calendar, Users, DollarSign, Plane, 
   Hotel, Compass, Coffee, Camera, Mountain,
   ChevronRight, Sparkles, Clock, Heart, CheckCircle,
-  X, ArrowLeft, Star
+  X, ArrowLeft, Star, History, ExternalLink
 } from 'lucide-react';
-import { api } from '../services/api'; // Import the centralized API service
+import { api } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 function formatItinerary(plan) {
   if (!plan) return null;
@@ -101,11 +102,21 @@ export default function TripPlanner() {
   const [generatedPlan, setGeneratedPlan] = useState(null);
   const [refinementInput, setRefinementInput] = useState("");
   const [isRefining, setIsRefining] = useState(false);
+  const [recentSearches, setRecentSearches] = useState([]);
+  const navigate = useNavigate();
 
   const isStep1Valid = formData.destination.trim() !== '' && formData.startDate !== '' && formData.endDate !== '';
   const isStep3Valid = formData.interests.length > 0;
 
   useEffect(() => {
+    // Load recent searches from localStorage
+    try {
+      const saved = JSON.parse(localStorage.getItem('tourease_recent_searches') || '[]');
+      setRecentSearches(saved);
+    } catch {
+      setRecentSearches([]);
+    }
+
     const style = document.createElement("style");
     style.innerHTML = `
       @media print {
@@ -151,17 +162,42 @@ export default function TripPlanner() {
     setError('');
 
     try {
-      // Use the centralized api service instead of a hardcoded fetch
       const data = await api.generateTrip(formData);
 
       if (!data.plan || data.plan.trim().length === 0) {
-        throw new Error("AI returned an empty itinerary");
+        throw new Error("AI returned an empty itinerary. Please try again.");
       }
 
       setGeneratedPlan(data.plan);
+
+      // Save to recent searches (localStorage)
+      const newSearch = {
+        destination: formData.destination,
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        travelers: formData.travelers,
+        budget: formData.budget,
+        timestamp: Date.now(),
+      };
+      const updatedSearches = [newSearch, ...recentSearches.filter(s => s.destination !== formData.destination)].slice(0, 5);
+      setRecentSearches(updatedSearches);
+      localStorage.setItem('tourease_recent_searches', JSON.stringify(updatedSearches));
+
+      // Save full tripData to sessionStorage for DynamicPlannerPage
+      sessionStorage.setItem('currentTrip', JSON.stringify({ ...formData, plan: data.plan }));
+
     } catch (err) {
-      setError(err.message || "Failed to generate trip. Please try again.");
-      console.error("Generation Error:", err);
+      // Improved error messages based on error type
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('ERR_CONNECTION')) {
+        setError('Cannot connect to the server. Please check your internet connection or try again later.');
+      } else if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        setError('Session expired. Please log in again to generate a trip.');
+      } else if (err.message.includes('429') || err.message.includes('rate limit')) {
+        setError('Too many requests. Please wait a moment before trying again.');
+      } else {
+        setError(err.message || 'Failed to generate trip. Please try again.');
+      }
+      console.error('Generation Error:', err);
     } finally {
       setIsGenerating(false);
     }
@@ -257,7 +293,7 @@ export default function TripPlanner() {
               onChange={(e) => setRefinementInput(e.target.value)}
               placeholder="e.g. Make it more budget friendly, add local food spots..."
               rows={3}
-              className="w-full p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:ring-2 focus:ring-teal-500/20"
+              className="w-full p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 outline-none focus:ring-2 focus:ring-teal-500/20 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
             />
             <button
               onClick={handleRefine}
@@ -273,7 +309,13 @@ export default function TripPlanner() {
               <ArrowLeft className="w-5 h-5 mr-2" /> Plan Another Trip
             </button>
             <button onClick={() => window.print()} className="px-8 py-4 bg-teal-500 text-white rounded-xl font-bold shadow-lg shadow-teal-500/30">
-              Print Itinerary
+              Print / Save as PDF
+            </button>
+            <button
+              onClick={() => navigate('/dynamic-planner')}
+              className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-lg flex items-center gap-2"
+            >
+              <ExternalLink className="w-5 h-5" /> View Dynamic Plan
             </button>
           </div>
         </div>
@@ -282,7 +324,7 @@ export default function TripPlanner() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-gray-950 text-gray-900 dark:text-white">
       <div className="relative bg-gradient-to-br from-teal-500 via-teal-600 to-cyan-600 text-white py-20 text-center overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-6 z-10">
           <div className="inline-flex items-center space-x-2 bg-white/10 border border-white/20 backdrop-blur-xl px-4 py-1.5 rounded-full mb-6">
@@ -334,21 +376,42 @@ export default function TripPlanner() {
                   value={formData.destination}
                   onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
                   placeholder="e.g., Paris, Tokyo, Bali..."
-                  className="w-full bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl px-6 py-4 text-lg outline-none focus:ring-2 focus:ring-teal-500/20"
+                  className="w-full bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl px-6 py-4 text-lg outline-none focus:ring-2 focus:ring-teal-500/20 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400"
                 />
+
+                {/* Recent Searches */}
+                {recentSearches.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-1">
+                      <History className="w-3.5 h-3.5" /> Recent Searches
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {recentSearches.map((s, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, destination: s.destination, startDate: s.startDate, endDate: s.endDate, travelers: s.travelers, budget: s.budget }))}
+                          className="px-3 py-1.5 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 rounded-full text-sm font-medium hover:bg-teal-100 dark:hover:bg-teal-900/60 transition flex items-center gap-1"
+                        >
+                          <MapPin className="w-3 h-3" />{s.destination}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl border dark:border-gray-800">
                   <label className="flex items-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
                     <Calendar className="w-5 h-5 mr-2 text-teal-500" /> Start Date
                   </label>
-                  <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-6 py-4 outline-none" />
+                  <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl px-6 py-4 outline-none text-gray-900 dark:text-white" />
                 </div>
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-xl border dark:border-gray-800">
                   <label className="flex items-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wider">
                     <Calendar className="w-5 h-5 mr-2 text-orange-500" /> End Date
                   </label>
-                  <input type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-6 py-4 outline-none" />
+                  <input type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="w-full bg-gray-50 dark:bg-gray-800 border dark:border-gray-700 rounded-xl px-6 py-4 outline-none text-gray-900 dark:text-white" />
                 </div>
               </div>
             </div>
@@ -391,7 +454,7 @@ export default function TripPlanner() {
                 <label className="flex items-center text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 uppercase tracking-wider"><DollarSign className="w-5 h-5 mr-2 text-teal-500" /> Budget Range</label>
                 <div className="grid grid-cols-3 gap-4">
                   {['budget', 'moderate', 'luxury'].map((b) => (
-                    <button key={b} onClick={() => setFormData({ ...formData, budget: b })} className={`py-4 px-6 rounded-xl font-bold transition-all ${formData.budget === b ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/40' : 'bg-gray-100 dark:bg-gray-800'}`}>
+                    <button key={b} onClick={() => setFormData({ ...formData, budget: b })} className={`py-4 px-6 rounded-xl font-bold transition-all ${formData.budget === b ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/40' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                       {b.charAt(0).toUpperCase() + b.slice(1)}
                     </button>
                   ))}

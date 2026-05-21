@@ -67,7 +67,7 @@ export default function PlanTrip() {
               value={formData.destination}
               onChange={handleChange}
               required
-              className="w-full border rounded-lg px-4 py-3 bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700"
+              className="w-full border rounded-lg px-4 py-3 bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
             >
               <option value="">Select a destination</option>
               {destinations.map((d) => (
@@ -89,7 +89,7 @@ export default function PlanTrip() {
               required
               min="1"
               placeholder="e.g. 5"
-              className="w-full border rounded-lg px-4 py-3 bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700"
+              className="w-full border rounded-lg px-4 py-3 bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
             />
           </div>
 
@@ -101,7 +101,7 @@ export default function PlanTrip() {
               value={formData.budget}
               onChange={handleChange}
               required
-              className="w-full border rounded-lg px-4 py-3 bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700"
+              className="w-full border rounded-lg px-4 py-3 bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white"
             >
               <option value="">Select budget range</option>
               <option value="$">Budget ($)</option>
