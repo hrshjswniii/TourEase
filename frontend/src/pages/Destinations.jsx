@@ -310,6 +310,6 @@ function DestinationCard({ destination, isFavorite, onToggleFavorite }) {
           Explore
         </button>
       </div>
-    </div>
+          
   );
 }

@@ -3,8 +3,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const reviewRoutes = require("./routes/reviewRoutes");
-
-dotenv.config();
+const authRoutes = require("./routes/authRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+// const tripRouter = require("./routes/tripRoutes");
+// const itineraryRoutes = require("./routes/itineraryRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const weatherRoutes = require("./routes/weatherRoutes");
+const smartPlannerRoutes = require("./routes/smartPlannerRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+require("dotenv").config();
 
 const app = express();
 
@@ -15,12 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
-app.use('/api/trip', tripRouter);
-app.use('/api/itinerary', itineraryRoutes);
+// app.use('/api/trip', tripRouter);
+// app.use('/api/itinerary', itineraryRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/weather', weatherRoutes);
 app.use('/api/smart-planner', smartPlannerRoutes);
-
+app.use("/api/chat", chatRoutes);
 // Health check route
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running' });

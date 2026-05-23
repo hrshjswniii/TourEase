@@ -7,7 +7,6 @@ import {
   X, ArrowLeft, Star, History, ExternalLink
 } from 'lucide-react';
 import { api } from '../services/api';
-import { useNavigate } from 'react-router-dom';
 
 function formatItinerary(plan) {
   if (!plan) return null;
@@ -105,7 +104,6 @@ export default function TripPlanner() {
   const [refinementInput, setRefinementInput] = useState("");
   const [isRefining, setIsRefining] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
-  const navigate = useNavigate();
 
   const isStep1Valid = formData.destination.trim() !== '' && formData.startDate !== '' && formData.endDate !== '';
   const isStep3Valid = formData.interests.length > 0;
