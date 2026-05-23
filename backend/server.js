@@ -3,6 +3,8 @@ dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const connectDB = require("./config/db");
+
 const authRoutes = require("./routes/authRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const eventRoutes = require("./routes/eventRoutes");
@@ -12,6 +14,10 @@ const smartPlannerRoutes = require("./routes/smartPlannerRoutes");
 const tripRoutes = require("./routes/tripRoutes");
 const weatherRoutes = require("./routes/weatherRoutes");
 const chatRoutes = require("./routes/chatroutes");
+const expenseRoutes = require("./routes/expenseRoutes");
+
+// Connect to Database
+connectDB();
 
 const app = express();
 
@@ -29,6 +35,7 @@ app.use("/api/weather", weatherRoutes);
 app.use("/api/smart-planner", smartPlannerRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/expenses", expenseRoutes);
 
 // Health check route
 app.get("/api/health", (req, res) => {
@@ -48,6 +55,7 @@ app.use((err, req, res, next) => {
 app.use((req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });
 });
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

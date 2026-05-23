@@ -22,6 +22,7 @@ export default function Navigation() {
     { path: "/contact", label: "Contact" },
     { path: "/trip-planner", label: "Trip Planner" },
     { path: "/smart-trip-planner", label: "Smart Planner" },
+    { path: "/split-expense", label: "Expense Splitter" },
   ];
 
   const isActive = (path) => location.pathname === path;

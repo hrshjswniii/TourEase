@@ -38,6 +38,7 @@ import Footer from "./components/Footer";
 import WatchDemoPage from './pages/DemoSection';
 import ScrollToTopOnNavigate from "./components/common/ScrollToTopOnNavigate";
 import DynamicPlannerPage from './pages/DynamicPlannerPage';
+import SplitExpense from "./pages/SplitExpense";
 
 function ProtectedRoute({ children }) {
   const isAuthenticated = Boolean(localStorage.getItem("token"));
@@ -95,6 +96,14 @@ function AppRoutes() {
           <Route path="*" element={<NotFound />} />
           <Route path="/trip-planner" element={<TripPlanner />} />
           <Route path="/smart-trip-planner" element={<SmartTripPlanner />} />
+          <Route
+            path="/split-expense"
+            element={
+              <ProtectedRoute>
+                <SplitExpense />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
       {showNavigation && <Footer />}
