@@ -42,28 +42,24 @@ class WeatherService {
     }
 
     // Convert location name to coordinates
+        // Convert location name to coordinates
     async _geocodeLocation(location) {
-        try {
-            const response = await axios.get(`${this.baseURL}/../geo/1.0/direct`, {
-                params: {
-                    q: location,
-                    limit: 1,
-                    appid: this.apiKey
-                }
-            });
-
-            if (response.data.length > 0) {
-                return {
-                    lat: response.data[0].lat,
-                    lon: response.data[0].lon
-                };
+        const response = await axios.get(`${this.baseURL}/../geo/1.0/direct`, {
+            params: {
+                q: location,
+                limit: 1,
+                appid: this.apiKey
             }
+        });
 
-            throw new Error('Location not found');
-        } catch (error) {
-            // Return default coords if geocoding fails
-            return { lat: 0, lon: 0 };
+        if (response.data.length > 0) {
+            return {
+                lat: response.data[0].lat,
+                lon: response.data[0].lon
+            };
         }
+
+        throw new Error('Location not found');
     }
 
     // Process raw forecast data into our format

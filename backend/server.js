@@ -1,10 +1,17 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const dotenv = require("dotenv");
-const reviewRoutes = require("./routes/reviewRoutes");
 
-dotenv.config();
+const reviewRoutes = require("./routes/reviewRoutes");
+const authRoutes = require('./routes/authRoutes');
+const contactRoutes = require('./routes/contactRoutes');
+const tripRouter = require('./routes/tripRoutes');
+const itineraryRoutes = require('./routes/itineraryRoutes');
+const eventRoutes = require('./routes/eventRoutes');
+const weatherRoutes = require('./routes/weatherRoutes');
+const smartPlannerRoutes = require('./routes/smartPlannerRoutes');
 
 const app = express();
 
