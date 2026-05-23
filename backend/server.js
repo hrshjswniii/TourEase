@@ -22,12 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
-app.use('/api/trip', tripRouter);
-app.use('/api/itinerary', itineraryRoutes);
+// app.use('/api/trip', tripRouter);
+// app.use('/api/itinerary', itineraryRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/weather', weatherRoutes);
 app.use('/api/smart-planner', smartPlannerRoutes);
-
+app.use("/api/chat", chatRoutes);
 // Health check route
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running' });
