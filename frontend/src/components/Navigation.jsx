@@ -116,7 +116,7 @@ export default function Navigation() {
               TourEase
             </span>
           </div>
-          <div className="flex flex-1 min-w-0 items-center justify-between gap-0.3">
+          <div className="flex flex-1 min-w-0 items-center justify-between gap-[0.3rem]">
             {/* DESKTOP NAV */}
             <div className="hidden xl:flex min-w-0 flex-1 items-center justify-center gap-1 px-2 xl:px-4">
               {navItems.map((item, index) => {
