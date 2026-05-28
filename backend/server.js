@@ -24,7 +24,10 @@ const app = express();
 
 app.use(helmet());
 app.use(morgan("dev")); // use "combined" in production
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
