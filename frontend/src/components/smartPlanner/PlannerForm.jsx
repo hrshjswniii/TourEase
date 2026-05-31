@@ -39,7 +39,7 @@ export default function PlannerForm({
           value={form.destination}
           onChange={(e) => onChange('destination', e.target.value)}
           placeholder="e.g. Goa, Paris, Manali"
-          className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border outline-none focus:ring-2 focus:ring-teal-500/30 ${
+          className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border outline-none focus:ring-2 focus:ring-teal-500/30 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 ${
             errors.destination ? 'border-red-400' : 'border-gray-200 dark:border-gray-700'
           }`}
         />
@@ -61,7 +61,7 @@ export default function PlannerForm({
             value={form.budget}
             onChange={(e) => onChange('budget', e.target.value)}
             placeholder="e.g. 50000"
-            className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border outline-none focus:ring-2 focus:ring-teal-500/30 ${
+            className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border outline-none focus:ring-2 focus:ring-teal-500/30 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 ${
               errors.budget ? 'border-red-400' : 'border-gray-200 dark:border-gray-700'
             }`}
           />
@@ -80,7 +80,7 @@ export default function PlannerForm({
             max="30"
             value={form.days}
             onChange={(e) => onChange('days', e.target.value)}
-            className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border outline-none focus:ring-2 focus:ring-teal-500/30 ${
+            className={`w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800 border outline-none focus:ring-2 focus:ring-teal-500/30 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-300 ${
               errors.days ? 'border-red-400' : 'border-gray-200 dark:border-gray-700'
             }`}
           />
@@ -158,10 +158,10 @@ export default function PlannerForm({
                 key={interest}
                 type="button"
                 onClick={() => onToggleInterest(interest)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/70 dark:focus-visible:ring-teal-300 ${
                   selected
-                    ? 'bg-orange-500 text-white border-orange-500'
-                    : 'border-gray-300 dark:border-gray-600 hover:border-teal-400'
+                    ? 'bg-orange-500 text-white border-orange-400 shadow-md shadow-orange-500/25 hover:bg-orange-400'
+                    : 'bg-white dark:bg-gray-800/90 border-gray-300 dark:border-gray-400 text-gray-700 dark:text-gray-100 hover:border-teal-400 dark:hover:border-teal-300 hover:text-gray-900 dark:hover:text-white'
                 }`}
               >
                 {interest}

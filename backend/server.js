@@ -1,46 +1,44 @@
-const dotenv = require("dotenv");
-dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const connectDB = require("./config/db");
+const dotenv = require("dotenv");
 
+const reviewRoutes = require("./routes/reviewRoutes");
 const authRoutes = require("./routes/authRoutes");
 const contactRoutes = require("./routes/contactRoutes");
-const eventRoutes = require("./routes/eventRoutes");
 const itineraryRoutes = require("./routes/itineraryRoutes");
-const reviewRoutes = require("./routes/reviewRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const weatherRoutes = require("./routes/weatherRoutes");
 const smartPlannerRoutes = require("./routes/smartPlannerRoutes");
 const tripRoutes = require("./routes/tripRoutes");
-const weatherRoutes = require("./routes/weatherRoutes");
 const chatRoutes = require("./routes/chatroutes");
 const expenseRoutes = require("./routes/expenseRoutes");
 const helmet = require("helmet");
+const morgan = require("morgan");
 
 
 
-// Connect to Database
-connectDB();
+dotenv.config();
 
 const app = express();
 
 app.use(helmet());
-
-app.use(cors());
+app.use(morgan("dev")); // use "combined" in production
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:3000",
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/contact", contactRoutes);
-app.use("/api/trip", tripRoutes);
-app.use("/api/itinerary", itineraryRoutes);
-app.use("/api/events", eventRoutes);
-app.use("/api/weather", weatherRoutes);
-app.use("/api/smart-planner", smartPlannerRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/expenses", expenseRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/trip', tripRoutes);
+app.use('/api/itinerary', itineraryRoutes);
+app.use('/api/events', eventRoutes);
+app.use('/api/weather', weatherRoutes);
+app.use('/api/smart-planner', smartPlannerRoutes);
 
 // Health check route
 app.get("/api/health", (req, res) => {
@@ -55,7 +53,6 @@ app.use((err, req, res, next) => {
     error: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 });
-
 // 404 handler must be LAST
 app.use((req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });

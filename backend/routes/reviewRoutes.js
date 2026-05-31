@@ -9,6 +9,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// Public: anyone can read reviews
 router.get("/:destinationId", getReviewsByDestination);
 router.post("/:destinationId", verifyToken, createReview);
 router.delete("/:reviewId", verifyToken, deleteReview);
