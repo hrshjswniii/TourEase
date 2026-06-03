@@ -122,10 +122,7 @@ const ReviewForm = ({ destinationId, refreshReviews }) => {
         rating: Number(formData.rating),
         destinationId,
         travelDate: new Date().toISOString(),
-      };
-
-      // Call your backend API
-      await submitReview(destinationId, reviewPayload);
+      });
 
       // Clear the form
       setFormData({
@@ -134,7 +131,6 @@ const ReviewForm = ({ destinationId, refreshReviews }) => {
         travelerType: "Solo",
         reviewText: "",
       });
-      setFormData({ username: "", rating: 0, travelerType: "Solo", reviewText: "" });
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 4000);
       refreshReviews();
@@ -208,7 +204,7 @@ const ReviewForm = ({ destinationId, refreshReviews }) => {
             onChange={handleChange}
             required
             disabled
-            className="w-full p-3 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 cursor-not-allowed outline-none font-medium"
+            className={`${inputBase} bg-gray-100 dark:bg-gray-800/60 text-gray-400 dark:text-gray-500 cursor-not-allowed font-medium`}
             placeholder="John Doe"
           />
         </div>
